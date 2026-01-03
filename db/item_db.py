@@ -108,3 +108,26 @@ def delete_item(item_id):
     conn.commit()
     conn.close()
 
+def add_or_update_item(name, description, unit, rate, hamali_rate):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    existing = cur.execute(
+        "SELECT id FROM items WHERE name = ?",
+        (name,)
+    ).fetchone()
+
+    if existing:
+        cur.execute("""
+            UPDATE items
+            SET description=?, unit=?, rate=?, hamali_rate=?
+            WHERE name=?
+        """, (description, unit, rate, hamali_rate, name))
+    else:
+        cur.execute("""
+            INSERT INTO items (name, description, unit, rate, hamali_rate)
+            VALUES (?, ?, ?, ?, ?)
+        """, (name, description, unit, rate, hamali_rate))
+
+    conn.commit()
+    conn.close()

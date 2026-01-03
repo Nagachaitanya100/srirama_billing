@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 
-from db.item_db import add_item , get_all_items , get_item_by_id, update_item, delete_item 
+from db.item_db import add_item , get_all_items , get_item_by_id, update_item, delete_item , add_or_update_item
 
 def show():
     st.header("Items")
@@ -177,6 +177,7 @@ def show():
     with tab_ie:
         col_imp, col_exp = st.columns(2)
 
+        
         # ---- IMPORT ----
         with col_imp:
             st.subheader("Import Items (Excel)")
@@ -200,43 +201,52 @@ def show():
                 if not all(col in df.columns for col in required_cols):
                     st.error("Invalid Excel format. Please use correct template.")
                 else:
-                    st.success("Items imported (UI only for now)")
-                    st.dataframe(df, use_container_width=True)
+                    imported = 0
+                    for _, row in df.iterrows():
+                        add_or_update_item(
+                            name=str(row["Item Name"]).strip(),
+                            description=str(row["Description"]).strip(),
+                            unit=str(row["Unit"]).strip(),
+                            rate=float(row["Rate"]),
+                            hamali_rate=float(row["Hamali Rate"])
+                        )
+                        imported += 1
+
+                    st.success(f"✅ {imported} items imported successfully")
+                    st.rerun()
 
         # ---- EXPORT ----
         with col_exp:
             st.subheader("Export Items")
 
-            export_data = [
-                {
-                    "Item Name": "Cement",
-                    "Description": "UltraTech Cement 50kg",
-                    "Unit": "Bag",
-                    "Rate": 420,
-                    "Hamali Rate": 20
-                },
-                {
-                    "Item Name": "TMT Rod",
-                    "Description": "TMT Steel Rod",
-                    "Unit": "Kg",
-                    "Rate": 62,
-                    "Hamali Rate": 5
-                },
-            ]
+            items = get_all_items()
 
-            export_df = pd.DataFrame(export_data)
+            if not items:
+                st.warning("No items to export")
+            else:
+                export_df = pd.DataFrame([
+                    {
+                        "Item Name": i["name"],
+                        "Description": i["description"],
+                        "Unit": i["unit"],
+                        "Rate": i["rate"],
+                        "Hamali Rate": i["hamali_rate"]
+                    }
+                    for i in items
+                ])
 
-            output = BytesIO()
-            with pd.ExcelWriter(output, engine="openpyxl") as writer:
-                export_df.to_excel(
-                    writer,
-                    index=False,
-                    sheet_name="Items"
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine="openpyxl") as writer:
+                    export_df.to_excel(
+                        writer,
+                        index=False,
+                        sheet_name="Items"
+                    )
+
+                st.download_button(
+                    "📤 Download Items Excel",
+                    data=output.getvalue(),
+                    file_name="items.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
 
-            st.download_button(
-                "📤 Download Items Excel",
-                data=output.getvalue(),
-                file_name="items.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
