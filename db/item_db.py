@@ -59,7 +59,7 @@ def get_item_names():
 
 
 # ---------------- GET ITEM BY NAME (FOR AUTO-FILL) ----------------
-def get_item(item_name):
+def get_item(name):
     conn = get_connection()
     conn.row_factory = sqlite3.Row
 
@@ -67,18 +67,29 @@ def get_item(item_name):
         """
         SELECT
             name,
-            description AS desc,
+            description,
             unit,
-            rate AS price,
-            hamali_rate AS hamali
+            rate,
+            hamali_rate
         FROM items
         WHERE name = ?
         """,
-        (item_name,)
+        (name,)
     ).fetchone()
 
     conn.close()
-    return dict(row) if row else None
+
+    if not row:
+        return None
+
+    return {
+        "name": row["name"],
+        "description": row["description"] or "",
+        "unit": row["unit"] or "",
+        "rate": float(row["rate"] or 0),
+        "hamali_rate": float(row["hamali_rate"] or 0)
+    }
+
 
 # ---------------- UPDATE ITEM ----------------
 def update_item(item_id, name, description, unit, rate, hamali_rate):
