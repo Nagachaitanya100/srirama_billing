@@ -397,7 +397,7 @@ def show():
             st.session_state._row_deleted = False
             st.rerun()
 
-    st.session_state._row_deleted = False
+        st.session_state._row_deleted = False
 
     # ---------------- Totals ----------------
 
