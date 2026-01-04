@@ -55,6 +55,25 @@ def show():
     if "estimate_saved" not in st.session_state:
         st.session_state.estimate_saved = False
 
+    # ---------- Session State Initialization ----------
+    if "customer_mode" not in st.session_state:
+        st.session_state.customer_mode = "existing"
+
+    if "selected_customer" not in st.session_state:
+        st.session_state.selected_customer = ""
+
+    if "customer_name_input" not in st.session_state:
+        st.session_state.customer_name_input = ""
+
+    if "est_items" not in st.session_state:
+        st.session_state.est_items = []
+
+    if "auto_charge" not in st.session_state:
+        st.session_state.auto_charge = 0.0
+
+    if "discount" not in st.session_state:
+        st.session_state.discount = 0.0
+
     st.header("Estimate")
 
     st.markdown(
@@ -114,7 +133,9 @@ def show():
         "Search Customer",
         customer_names,
         index=customer_names.index(st.session_state.selected_customer)
-        if st.session_state.selected_customer in customer_names else 0
+        if st.session_state.selected_customer in customer_names
+        else 0,
+        key="customer_search"
     )
 
     customer_data = None
