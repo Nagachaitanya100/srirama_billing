@@ -285,9 +285,11 @@ def show():
         row["qty"] = c3.number_input(
             f"qty_{i}",
             min_value=1,
-            value=row["qty"],
+            value=float(row["qty"] or 1),
+            step=1,
             label_visibility="collapsed"
         )
+
 
         row["unit"] = c4.text_input(
             f"unit_{i}",
@@ -298,10 +300,11 @@ def show():
         row["rate"] = c5.number_input(
             f"rate_{i}",
             min_value=0.0,
-            value=row["rate"],
+            value=float(row["rate"] or 0),
             step=0.5,
             label_visibility="collapsed"
         )
+
     
         if row["item_name"] == "" or row["rate"] == 0:
             row.pop("_completed", None)
@@ -319,10 +322,11 @@ def show():
         row["hamali_rate"] = c7.number_input(
             f"hamali_{i}",
             min_value=0.0,
-            value=row["hamali_rate"],
+            value=float(row["hamali_rate"] or 0),
             step=1.0,
             label_visibility="collapsed"
         )
+
 
         hamali_total = row["qty"] * row["hamali_rate"]
         hamali_grand_total += hamali_total
@@ -405,8 +409,8 @@ def show():
     # ---- Auto ----
     st.session_state.auto_charge = st.number_input(
         "Auto Charges",
-        value=st.session_state.auto_charge,
-        step=50.0
+        value=int(st.session_state.auto_charge),
+        step=50
     )
 
     # ---- Subtotal ----
