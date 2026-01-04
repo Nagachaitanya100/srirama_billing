@@ -284,9 +284,9 @@ def show():
 
         row["qty"] = c3.number_input(
             f"qty_{i}",
-            min_value=1,
+            min_value=1.00,
             value=float(row["qty"] or 1),
-            step=1,
+            step=1.00,
             label_visibility="collapsed"
         )
 
