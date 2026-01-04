@@ -552,7 +552,7 @@ def generate_estimate_pdf(
             if item_description.strip():
                 combined_item_text += f"\n{item_description}"
 
-            quantity_with_unit = f"{item_qty} {item_unit}"
+            quantity_with_unit = f"{fmt_qty(item_qty)} {item_unit}"
 
             combined_table_data.append([
                 quantity_with_unit,
