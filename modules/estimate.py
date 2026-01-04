@@ -342,14 +342,26 @@ def show():
 
     st.divider()
 
+    # Ensure at least one empty row exists
+    if not st.session_state.est_items:
+        st.session_state.est_items.append({
+            "item_name": "",
+            "desc": "",
+            "qty": 1,
+            "unit": "",
+            "rate": 0.0,
+            "hamali_rate": 0.0
+        })
+
+
     # ---- AUTO ADD ROW WHEN LAST ROW IS COMPLETED ----
 
     last_row = st.session_state.est_items[-1]
 
     is_last_row_filled = (
         last_row["item_name"] != "" and
-        last_row["qty"] > 0 and
-        last_row["rate"] > 0
+        last_row["qty",0] > 0 and
+        last_row["rate",0] > 0
     )
 
     # Prevent auto-add immediately after delete
