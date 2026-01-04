@@ -15,6 +15,11 @@ from db.customer_db import (
     add_customer
 ) 
 
+@st.cache_data(show_spinner=False)
+def load_item_master():
+    from db.item_db import get_all_items
+    items = get_all_items()
+    return {i["name"]: i for i in items}
 
 
 def show():
@@ -246,7 +251,9 @@ def show():
     grand_total = 0.0
     hamali_grand_total = 0.0
 
-    item_names = [""] + get_item_names()
+    ITEMS = load_item_master()
+    item_names = [""] + list(ITEMS.keys())
+
 
     for i, row in enumerate(st.session_state.est_items):
         c1, c2, c3, c4, c5, c6, c7, c8, c9 = st.columns([3, 3, 1, 1.5, 2, 2, 2, 2, 1])
@@ -260,14 +267,14 @@ def show():
         )
 
         # Fetch from DB if item exists
-        if selected_item:
+        if selected_item and row["item_name"] != selected_item:
             row["item_name"] = selected_item
-            item_data = get_item(selected_item)
-
-            row["desc"] = item_data["description"]
-            row["unit"] = item_data["unit"]
-            row["rate"] = item_data["rate"]
-            row["hamali_rate"] = item_data["hamali_rate"]
+            item_data = ITEMS.get(selected_item)
+            if item_data:
+                row["desc"] = item_data["description"]
+                row["unit"] = item_data["unit"]
+                row["rate"] = item_data["rate"]
+                row["hamali_rate"] = item_data["hamali_rate"]
 
         row["desc"] = c2.text_input(
             f"desc_{i}",
