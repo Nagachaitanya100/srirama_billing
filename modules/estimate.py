@@ -394,8 +394,9 @@ def show():
                 "rate": 0.0,
                 "hamali_rate": 0.0
             })
-            st.session_state._row_deleted = False
-            st.rerun()
+            
+        
+        st.rerun()
 
         
 
