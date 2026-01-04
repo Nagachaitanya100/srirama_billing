@@ -360,28 +360,24 @@ def show():
 
     # ---- AUTO ADD ROW WHEN LAST ROW IS COMPLETED ----
 
-    last_row = st.session_state.est_items[-1]
+    if st.session_state.est_items:
+        last_row = st.session_state.est_items[-1]
 
-    is_last_row_filled = (
-        last_row.get["item_name"] != "" and
-        last_row.get["qty",0] > 0 and
-        last_row.get["rate",0] > 0
-    )
+        is_last_row_filled = (
+            last_row.get("item_name", "") != "" and
+            last_row.get("qty", 0) > 0 and
+            last_row.get("rate", 0) > 0
+        )
 
-    # Prevent auto-add immediately after delete
-    if is_last_row_filled and not st.session_state.get("_row_deleted", False):
-        if not last_row.get("_completed"):
-            last_row["_completed"] = True
-            st.session_state.est_items.append(
-                {
-                    "item_name": "",
-                    "desc": "",
-                    "qty": 1,
-                    "unit": "",
-                    "rate": 0.0,
-                    "hamali_rate": 0.0
-                }
-            )
+        if is_last_row_filled and not is_editing:
+            st.session_state.est_items.append({
+                "item_name": "",
+                "desc": "",
+                "qty": 1,
+                "unit": "",
+                "rate": 0.0,
+                "hamali_rate": 0.0
+            })
             st.session_state._row_deleted = False
             st.rerun()
 
