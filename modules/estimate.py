@@ -30,6 +30,9 @@ def show():
         "address": "Warangal Road, Huzurabad"
     }
 
+    if "_row_deleted" not in st.session_state:
+    st.session_state._row_deleted = False
+
     if "auto_charge" not in st.session_state:
         st.session_state.auto_charge = 0.0
 
@@ -205,6 +208,7 @@ def show():
 
     st.divider()
 
+    is_editing = "edit_estimate_id" in st.session_state
 
     # ---------------- Items Section ----------------
     st.markdown("### Items")
@@ -340,7 +344,19 @@ def show():
         if c9.button("❌", key=f"del_{i}"):
             st.session_state.est_items.pop(i)
             st.session_state._row_deleted = True
+
+            if not st.session_state.est_items:
+                st.session_state.est_items.append({
+                    "item_name": "",
+                    "desc": "",
+                    "qty": 1,
+                    "unit": "",
+                    "rate": 0.0,
+                    "hamali_rate": 0.0
+                })
+
             st.rerun()
+
 
 
 
@@ -369,7 +385,7 @@ def show():
             last_row.get("rate", 0) > 0
         )
 
-        if is_last_row_filled and not is_editing:
+        if is_last_row_filled and not is_editing and not st.session_state._row_deleted:
             st.session_state.est_items.append({
                 "item_name": "",
                 "desc": "",
@@ -380,6 +396,8 @@ def show():
             })
             st.session_state._row_deleted = False
             st.rerun()
+
+    st.session_state._row_deleted = False
 
     # ---------------- Totals ----------------
 
@@ -428,7 +446,6 @@ def show():
     st.divider()
     st.subheader(f"Grand Total : ₹ {final_total:.2f}")
 
-    is_editing = "edit_estimate_id" in st.session_state
 
     # ---------------- Actions ----------------
     if st.button("💾 Save & Generate PDF", key="save_estimate_btn"):
