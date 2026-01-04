@@ -394,7 +394,6 @@ def show():
                 "rate": 0.0,
                 "hamali_rate": 0.0
             })
-            
             st.session_state._row_deleted = False
             st.rerun()
 
@@ -437,7 +436,7 @@ def show():
     # ---- Discount ----
     st.session_state.discount = st.number_input(
         "Discount",
-        value=st.session_state.discount,
+        value=float(st.session_state.discount or 0.0),
         step=50.0
     )
 
