@@ -363,9 +363,9 @@ def show():
     last_row = st.session_state.est_items[-1]
 
     is_last_row_filled = (
-        last_row["item_name"] != "" and
-        last_row["qty",0] > 0 and
-        last_row["rate",0] > 0
+        last_row.get["item_name"] != "" and
+        last_row.get["qty",0] > 0 and
+        last_row.get["rate",0] > 0
     )
 
     # Prevent auto-add immediately after delete
