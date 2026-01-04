@@ -31,7 +31,7 @@ def show():
     }
 
     if "_row_deleted" not in st.session_state:
-    st.session_state._row_deleted = False
+        st.session_state._row_deleted = False
 
     if "auto_charge" not in st.session_state:
         st.session_state.auto_charge = 0.0
@@ -395,8 +395,8 @@ def show():
                 "hamali_rate": 0.0
             })
             
-        
-        st.rerun()
+            st.session_state._row_deleted = False
+            st.rerun()
 
         
 
