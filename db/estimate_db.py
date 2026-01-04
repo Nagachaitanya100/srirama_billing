@@ -77,10 +77,6 @@ def save_estimate_items(estimate_id, items):
     cur = conn.cursor()
 
     for item in items:
-        qty = item.get("qty", 0)
-        rate = item.get("rate", 0.0)
-        hamali_rate = item.get("hamali_rate", 0.0)
-
         if not item.get("item_name"):
             continue  # skip empty rows
 
@@ -92,25 +88,22 @@ def save_estimate_items(estimate_id, items):
                 qty,
                 unit,
                 rate,
-                row_total,
-                hamali_rate,
-                hamali_total
+                hamali_rate
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (
             estimate_id,
-            item.get("item_name", ""),
+            item["item_name"],
             item.get("desc", ""),
-            qty,
+            item["qty"],
             item.get("unit", ""),
-            rate,
-            qty * rate,
-            hamali_rate,
-            qty * hamali_rate
+            item["rate"],
+            item.get("hamali_rate", 0)
         ))
 
     conn.commit()
     conn.close()
+
 
 
 # ---------------- UPDATE ESTIMATE HEADER ----------------
